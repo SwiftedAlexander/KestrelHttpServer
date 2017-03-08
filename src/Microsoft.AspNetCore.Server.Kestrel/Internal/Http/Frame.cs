@@ -1183,22 +1183,6 @@ namespace Microsoft.AspNetCore.Server.Kestrel.Internal.Http
                     _applicationException);
         }
 
-        private void RejectRequest(RequestRejectionReason reason, Span<byte> detail)
-        {
-            RequestRejectionUtilities.RejectRequest(
-                reason,
-                (Log.IsEnabled(LogLevel.Information) ? detail.GetAsciiStringEscaped(32) : string.Empty));
-        }
-
-        private void RejectRequestLine(Span<byte> requestLine)
-        {
-            Debug.Assert(Log.IsEnabled(LogLevel.Information) == true, "Use RejectRequest instead to improve inlining when log is disabled");
-
-            const int MaxRequestLineError = 32;
-            var line = requestLine.GetAsciiStringEscaped(MaxRequestLineError);
-            throw BadHttpRequestException.GetException(RequestRejectionReason.InvalidRequestLine, line);
-        }
-
         public void SetBadRequestState(RequestRejectionReason reason)
         {
             SetBadRequestState(BadHttpRequestException.GetException(reason));
@@ -1317,7 +1301,11 @@ namespace Microsoft.AspNetCore.Server.Kestrel.Internal.Http
             }
             catch (InvalidOperationException)
             {
-                RejectRequest(RequestRejectionReason.InvalidCharactersInRequestPath, target);
+                RequestRejectionUtilities.RejectRequest(
+                    RequestRejectionReason.InvalidCharactersInRequestPath,
+                    detail: target,
+                    logDetail: Log.IsEnabled(LogLevel.Information),
+                    maxDetailChars: 32);
             }
 
             QueryString = query.GetAsciiStringNonNullCharacters();
