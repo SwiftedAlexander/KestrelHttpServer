@@ -331,6 +331,38 @@ namespace Microsoft.AspNetCore.Server.KestrelTests
         }
 
         [Theory]
+        [MemberData(nameof(MethodWithNullCharData))]
+        public async Task TakeStartLineThrowsOnNullCharInMethod(string method)
+        {
+            var requestLine = $"{method} / HTTP/1.1\r\n";
+
+            await _input.Writer.WriteAsync(Encoding.ASCII.GetBytes(requestLine));
+            var readableBuffer = (await _input.Reader.ReadAsync()).Buffer;
+
+            var exception = Assert.Throws<BadHttpRequestException>(() =>
+                _frame.TakeStartLine(readableBuffer, out _consumed, out _examined));
+            _input.Reader.Advance(_consumed, _examined);
+
+            Assert.Equal($"Invalid request line: '{requestLine.Replace("\0", "\\x00").Replace("\r", "\\x0D").Replace("\n", "\\x0A")}'", exception.Message);
+        }
+
+        [Theory]
+        [MemberData(nameof(QueryStringWithNullCharData))]
+        public async Task TakeStartLineThrowsOnNullCharInQueryString(string queryString)
+        {
+            var target = $"/{queryString}";
+
+            await _input.Writer.WriteAsync(Encoding.ASCII.GetBytes($"GET {target} HTTP/1.1\r\n"));
+            var readableBuffer = (await _input.Reader.ReadAsync()).Buffer;
+
+            var exception = Assert.Throws<BadHttpRequestException>(() =>
+                _frame.TakeStartLine(readableBuffer, out _consumed, out _examined));
+            _input.Reader.Advance(_consumed, _examined);
+
+            Assert.Equal($"Invalid request target: '{target.Replace("\0", "\\x00")}'", exception.Message);
+        }
+
+        [Theory]
         [MemberData(nameof(RequestLineWithInvalidRequestTargetData))]
         public async Task TakeStartLineThrowsWhenRequestTargetIsInvalid(string requestLine)
         {
@@ -343,7 +375,6 @@ namespace Microsoft.AspNetCore.Server.KestrelTests
 
             Assert.Equal($"Invalid request line: '{Escape(requestLine)}'", exception.Message);
         }
-
 
         [Theory]
         [MemberData(nameof(MethodNotAllowedTargetData))]
@@ -360,7 +391,7 @@ namespace Microsoft.AspNetCore.Server.KestrelTests
             Assert.Equal("Method not allowed.", exception.Message);
             Assert.Equal(HttpUtilities.MethodToString(allowedMethod), exception.AllowedHeader);
         }
-
+        
         [Fact]
         public void RequestProcessingAsyncEnablesKeepAliveTimeout()
         {
@@ -605,6 +636,36 @@ namespace Microsoft.AspNetCore.Server.KestrelTests
                 var data = new TheoryData<string>();
 
                 foreach (var target in HttpParsingData.TargetWithNullCharData)
+                {
+                    data.Add(target);
+                }
+
+                return data;
+            }
+        }
+
+        public static TheoryData<string> MethodWithNullCharData
+        {
+            get
+            {
+                var data = new TheoryData<string>();
+
+                foreach (var target in HttpParsingData.MethodWithNullCharData)
+                {
+                    data.Add(target);
+                }
+
+                return data;
+            }
+        }
+
+        public static TheoryData<string> QueryStringWithNullCharData
+        {
+            get
+            {
+                var data = new TheoryData<string>();
+
+                foreach (var target in HttpParsingData.QueryStringWithNullCharData)
                 {
                     data.Add(target);
                 }
