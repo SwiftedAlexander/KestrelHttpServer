@@ -1304,8 +1304,7 @@ namespace Microsoft.AspNetCore.Server.Kestrel.Internal.Http
                 RequestRejectionUtilities.RejectRequest(
                     RequestRejectionReason.InvalidCharactersInRequestPath,
                     detail: target,
-                    logDetail: Log.IsEnabled(LogLevel.Information),
-                    maxDetailChars: 32);
+                    logDetail: Log.IsEnabled(LogLevel.Information));
             }
 
             QueryString = query.GetAsciiStringNonNullCharacters();
