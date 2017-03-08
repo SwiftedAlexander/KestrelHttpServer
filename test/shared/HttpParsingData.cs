@@ -262,6 +262,8 @@ namespace Microsoft.AspNetCore.Testing
             "/\0",
             "/\0\0",
             "/%C8\0",
+            "/?\0=a",
+            "/?a=\0"
         };
 
         public static TheoryData<string> UnrecognizedHttpVersionData => new TheoryData<string>
