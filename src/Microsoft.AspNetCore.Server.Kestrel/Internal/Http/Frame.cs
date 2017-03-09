@@ -1280,7 +1280,7 @@ namespace Microsoft.AspNetCore.Server.Kestrel.Internal.Http
 
                     // URI was encoded, unescape and then parse as utf8
                     int pathLength = UrlEncoder.Decode(path, path);
-                    requestUrlPath = GetUtf8String(path.Slice(0, pathLength)).ToString();
+                    requestUrlPath = GetUtf8String(path.Slice(0, pathLength));
                 }
                 else
                 {
