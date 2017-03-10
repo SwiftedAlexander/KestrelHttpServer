@@ -1183,6 +1183,14 @@ namespace Microsoft.AspNetCore.Server.Kestrel.Internal.Http
                     _applicationException);
         }
 
+        private void RejectRequestTarget(Span<byte> target)
+        {
+            RequestRejectionUtilities.RejectRequest(
+                RequestRejectionReason.InvalidRequestTarget,
+                detail: target,
+                logDetail: Log.IsEnabled(LogLevel.Information));
+        }
+
         public void SetBadRequestState(RequestRejectionReason reason)
         {
             SetBadRequestState(BadHttpRequestException.GetException(reason));
@@ -1301,10 +1309,7 @@ namespace Microsoft.AspNetCore.Server.Kestrel.Internal.Http
             }
             catch (InvalidOperationException)
             {
-                RequestRejectionUtilities.RejectRequest(
-                    RequestRejectionReason.InvalidRequestTarget,
-                    detail: target,
-                    logDetail: Log.IsEnabled(LogLevel.Information));
+                RejectRequestTarget(target);
             }
 
             QueryString = query.GetAsciiStringNonNullCharacters();
@@ -1322,10 +1327,7 @@ namespace Microsoft.AspNetCore.Server.Kestrel.Internal.Http
                 var ch = target[i];
                 if (!UriUtilities.IsValidAuthorityCharacter(ch))
                 {
-                    RequestRejectionUtilities.RejectRequest(
-                        RequestRejectionReason.InvalidRequestTarget,
-                        detail: target,
-                        logDetail: Log.IsEnabled(LogLevel.Information));
+                    RejectRequestTarget(target);
                 }
             }
 
@@ -1386,15 +1388,7 @@ namespace Microsoft.AspNetCore.Server.Kestrel.Internal.Http
 
             if (!Uri.TryCreate(RawTarget, UriKind.Absolute, out var uri))
             {
-                if (Log.IsEnabled(LogLevel.Information))
-                {
-                    RequestRejectionUtilities.RejectRequest(
-                        RequestRejectionReason.InvalidRequestTarget,
-                        detail: target,
-                        logDetail: Log.IsEnabled(LogLevel.Information));
-                }
-
-                throw BadHttpRequestException.GetException(RequestRejectionReason.InvalidRequestLine);
+                RejectRequestTarget(target);
             }
 
             SetNormalizedPath(uri.LocalPath);

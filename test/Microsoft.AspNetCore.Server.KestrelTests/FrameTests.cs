@@ -614,7 +614,7 @@ namespace Microsoft.AspNetCore.Server.KestrelTests
 
         private string Escape(string requestLine)
         {
-            var ellipsis = requestLine.Length > 32
+            var ellipsis = requestLine.Length > 128
                 ? "..."
                 : string.Empty;
             return requestLine
