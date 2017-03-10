@@ -1302,7 +1302,7 @@ namespace Microsoft.AspNetCore.Server.Kestrel.Internal.Http
             catch (InvalidOperationException)
             {
                 RequestRejectionUtilities.RejectRequest(
-                    RequestRejectionReason.InvalidCharactersInRequestPath,
+                    RequestRejectionReason.InvalidRequestTarget,
                     detail: target,
                     logDetail: Log.IsEnabled(LogLevel.Information));
             }

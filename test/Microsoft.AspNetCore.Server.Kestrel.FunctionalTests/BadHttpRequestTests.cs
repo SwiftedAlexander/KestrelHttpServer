@@ -164,12 +164,12 @@ namespace Microsoft.AspNetCore.Server.Kestrel.FunctionalTests
 
                 foreach (var target in HttpParsingData.TargetWithEncodedNullCharData)
                 {
-                    data.Add($"GET {target} HTTP/1.1\r\n", $"Invalid characters in request target: '{target.Replace("\r", "\\x0D").Replace("\n", "\\x0A")}'");
+                    data.Add($"GET {target} HTTP/1.1\r\n", $"Invalid request target: '{target.Replace("\r", "\\x0D").Replace("\n", "\\x0A")}'");
                 }
 
                 foreach (var target in HttpParsingData.TargetWithNullCharData)
                 {
-                    data.Add($"GET {target} HTTP/1.1\r\n", $"Invalid characters in request target: '{target.Replace("\r", "\\x0D").Replace("\n", "\\x0A").Replace("\0", "\\x00")}'");
+                    data.Add($"GET {target} HTTP/1.1\r\n", $"Invalid request target: '{target.Replace("\r", "\\x0D").Replace("\n", "\\x0A").Replace("\0", "\\x00")}'");
                 }
 
                 return data;

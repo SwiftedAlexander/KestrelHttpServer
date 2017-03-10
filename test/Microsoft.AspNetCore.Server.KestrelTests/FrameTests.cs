@@ -313,7 +313,7 @@ namespace Microsoft.AspNetCore.Server.KestrelTests
                 _frame.TakeStartLine(readableBuffer, out _consumed, out _examined));
             _input.Reader.Advance(_consumed, _examined);
 
-            Assert.Equal($"Invalid characters in request target: '{target}'", exception.Message);
+            Assert.Equal($"Invalid request target: '{target}'", exception.Message);
         }
 
         [Theory]
@@ -327,7 +327,7 @@ namespace Microsoft.AspNetCore.Server.KestrelTests
                 _frame.TakeStartLine(readableBuffer, out _consumed, out _examined));
             _input.Reader.Advance(_consumed, _examined);
 
-            Assert.Equal($"Invalid characters in request target: '{target.Replace("\0", "\\x00")}'", exception.Message);
+            Assert.Equal($"Invalid request target: '{target.Replace("\0", "\\x00")}'", exception.Message);
         }
 
         [Theory]
@@ -584,7 +584,7 @@ namespace Microsoft.AspNetCore.Server.KestrelTests
                     _frame.TakeStartLine(readableBuffer, out _consumed, out _examined));
                 _input.Reader.Advance(_consumed, _examined);
 
-                Assert.Equal("Invalid characters in request target: ''", exception.Message);
+                Assert.Equal("Invalid request target: ''", exception.Message);
                 Assert.Equal(StatusCodes.Status400BadRequest, exception.StatusCode);
             }
             finally
