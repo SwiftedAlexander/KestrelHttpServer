@@ -327,7 +327,7 @@ namespace Microsoft.AspNetCore.Server.KestrelTests
                 _frame.TakeStartLine(readableBuffer, out _consumed, out _examined));
             _input.Reader.Advance(_consumed, _examined);
 
-            Assert.Equal($"Invalid request target: '{target.Replace("\0", "\\x00")}'", exception.Message);
+            Assert.Equal($"Invalid request target: '{target.EscapeNonPrintable()}'", exception.Message);
         }
 
         [Theory]
@@ -343,7 +343,7 @@ namespace Microsoft.AspNetCore.Server.KestrelTests
                 _frame.TakeStartLine(readableBuffer, out _consumed, out _examined));
             _input.Reader.Advance(_consumed, _examined);
 
-            Assert.Equal($"Invalid request line: '{requestLine.Replace("\0", "\\x00").Replace("\r", "\\x0D").Replace("\n", "\\x0A")}'", exception.Message);
+            Assert.Equal($"Invalid request line: '{requestLine.EscapeNonPrintable()}'", exception.Message);
         }
 
         [Theory]
@@ -359,7 +359,7 @@ namespace Microsoft.AspNetCore.Server.KestrelTests
                 _frame.TakeStartLine(readableBuffer, out _consumed, out _examined));
             _input.Reader.Advance(_consumed, _examined);
 
-            Assert.Equal($"Invalid request target: '{target.Replace("\0", "\\x00")}'", exception.Message);
+            Assert.Equal($"Invalid request target: '{target.EscapeNonPrintable()}'", exception.Message);
         }
 
         [Theory]
@@ -375,7 +375,7 @@ namespace Microsoft.AspNetCore.Server.KestrelTests
                 _frame.TakeStartLine(readableBuffer, out _consumed, out _examined));
             _input.Reader.Advance(_consumed, _examined);
 
-            Assert.Equal($"Invalid request target: '{Escape(target)}'", exception.Message);
+            Assert.Equal($"Invalid request target: '{target.EscapeNonPrintable()}'", exception.Message);
         }
 
         [Theory]
@@ -610,19 +610,6 @@ namespace Microsoft.AspNetCore.Server.KestrelTests
 
                 return data;
             }
-        }
-
-        private string Escape(string requestLine)
-        {
-            var ellipsis = requestLine.Length > 128
-                ? "..."
-                : string.Empty;
-            return requestLine
-                .Substring(0, Math.Min(32, requestLine.Length))
-                .Replace("\r", @"\x0D")
-                .Replace("\n", @"\x0A")
-                .Replace("\0", @"\x00")
-                + ellipsis;
         }
 
         public static TheoryData<string, string> TargetInvalidData 

@@ -1252,8 +1252,7 @@ namespace Microsoft.AspNetCore.Server.Kestrel.Internal.Http
             {
                 // Assume anything else is considered authority form.
                 // FYI: this should be an edge case. This should only happen when
-                // a client mistakenly things this server is a proxy server.
-
+                // a client mistakenly thinks this server is a proxy server.
                 OnAuthorityFormTarget(method, target);
             }
 
@@ -1340,14 +1339,13 @@ namespace Microsoft.AspNetCore.Server.Kestrel.Internal.Http
 
             // When making a CONNECT request to establish a tunnel through one or
             // more proxies, a client MUST send only the target URI's authority
-            // component(excluding any userinfo and its "@" delimiter) as the
-            // request - target.For example,
+            // component (excluding any userinfo and its "@" delimiter) as the
+            // request-target.For example,
             //
             //  CONNECT www.example.com:80 HTTP/1.1
             //
             // Allowed characters in the 'host + port' section of authority.
             // See https://tools.ietf.org/html/rfc3986#section-3.2
-
             RawTarget = target.GetAsciiStringNonNullCharacters();
             Path = string.Empty;
             PathBase = string.Empty;

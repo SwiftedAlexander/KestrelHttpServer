@@ -19,9 +19,6 @@ namespace Microsoft.AspNetCore.Server.KestrelTests
 {
     public class HttpParserTests
     {
-        // Returns true when all headers parsed
-        // Return false otherwise
-
         [Theory]
         [MemberData(nameof(RequestLineValidData))]
         public void ParsesRequestLine(

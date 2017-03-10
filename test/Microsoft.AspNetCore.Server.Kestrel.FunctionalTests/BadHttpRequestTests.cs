@@ -149,27 +149,19 @@ namespace Microsoft.AspNetCore.Server.Kestrel.FunctionalTests
             {
                 var data = new TheoryData<string, string>();
 
-                string Escape(string line)
-                {
-                    return line
-                        .Replace("\r", @"\x0D")
-                        .Replace("\n", @"\x0A")
-                        .Replace("\0", @"\x00");
-                }
-
                 foreach (var requestLine in HttpParsingData.RequestLineInvalidData)
                 {
-                    data.Add(requestLine, $"Invalid request line: '{Escape(requestLine)}'");
+                    data.Add(requestLine, $"Invalid request line: '{requestLine.EscapeNonPrintable()}'");
                 }
 
                 foreach (var target in HttpParsingData.TargetWithEncodedNullCharData)
                 {
-                    data.Add($"GET {target} HTTP/1.1\r\n", $"Invalid request target: '{Escape(target)}'");
+                    data.Add($"GET {target} HTTP/1.1\r\n", $"Invalid request target: '{target.EscapeNonPrintable()}'");
                 }
 
                 foreach (var target in HttpParsingData.TargetWithNullCharData)
                 {
-                    data.Add($"GET {target} HTTP/1.1\r\n", $"Invalid request target: '{Escape(target)}'");
+                    data.Add($"GET {target} HTTP/1.1\r\n", $"Invalid request target: '{target.EscapeNonPrintable()}'");
                 }
 
                 return data;
