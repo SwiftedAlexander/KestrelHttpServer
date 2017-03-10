@@ -182,7 +182,7 @@ namespace Microsoft.AspNetCore.Server.Kestrel.Internal.Http
 
             var line = new Span<byte>(data, length);
 
-            handler.OnStartLine(method, httpVersion, targetBuffer, pathBuffer, query, customMethod, line, pathEncoded);
+            handler.OnStartLine(method, httpVersion, targetBuffer, pathBuffer, query, customMethod, pathEncoded);
         }
 
         public unsafe bool ParseHeaders<T>(T handler, ReadableBuffer buffer, out ReadCursor consumed, out ReadCursor examined, out int consumedBytes) where T : IHttpHeadersHandler

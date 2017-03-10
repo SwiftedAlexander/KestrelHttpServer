@@ -1228,7 +1228,7 @@ namespace Microsoft.AspNetCore.Server.Kestrel.Internal.Http
             Log.ApplicationError(ConnectionId, ex);
         }
 
-        public void OnStartLine(HttpMethod method, HttpVersion version, Span<byte> target, Span<byte> path, Span<byte> query, Span<byte> customMethod, Span<byte> line, bool pathEncoded)
+        public void OnStartLine(HttpMethod method, HttpVersion version, Span<byte> target, Span<byte> path, Span<byte> query, Span<byte> customMethod, bool pathEncoded)
         {
             Debug.Assert(target.Length != 0, "Request target must be non-zero length");
 
@@ -1246,7 +1246,7 @@ namespace Microsoft.AspNetCore.Server.Kestrel.Internal.Http
             }
             else if (target.GetKnownHttpScheme(out var scheme))
             {
-                OnAbsoluteFormTarget(target, query, line);
+                OnAbsoluteFormTarget(target, query);
             }
             else
             {
@@ -1254,7 +1254,7 @@ namespace Microsoft.AspNetCore.Server.Kestrel.Internal.Http
                 // FYI: this should be an edge case. This should only happen when
                 // a client mistakenly things this server is a proxy server.
 
-                OnAuthorityFormTarget(method, target, line);
+                OnAuthorityFormTarget(method, target);
             }
 
             Method = method != HttpMethod.Custom
@@ -1317,7 +1317,7 @@ namespace Microsoft.AspNetCore.Server.Kestrel.Internal.Http
             SetNormalizedPath(requestUrlPath);
         }
 
-        private void OnAuthorityFormTarget(HttpMethod method, Span<byte> target, Span<byte> line)
+        private void OnAuthorityFormTarget(HttpMethod method, Span<byte> target)
         {
             // TODO Validate that target is a correct host[:port] string.
             // Reject as 400 if not. This is just a quick scan for invalid characters
@@ -1369,7 +1369,7 @@ namespace Microsoft.AspNetCore.Server.Kestrel.Internal.Http
             QueryString = string.Empty;
         }
 
-        private void OnAbsoluteFormTarget(Span<byte> target, Span<byte> query, Span<byte> line)
+        private void OnAbsoluteFormTarget(Span<byte> target, Span<byte> query)
         {
             // absolute-form
             // https://tools.ietf.org/html/rfc7230#section-5.3.2
