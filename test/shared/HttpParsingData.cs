@@ -218,59 +218,38 @@ namespace Microsoft.AspNetCore.Testing
             "/%F3%85%82%00",
         };
 
-        public static TheoryData<string> RequestTargetInvalidData => new TheoryData<string>
+        public static TheoryData<string, string> TargetInvalidData
         {
-            // Invalid absolute-form
-            "http://",
-            "http:/",
-            "https:/",
-            "http:///",
-            "https://",
-            "http:////",
-            "http://:80",
-            "http://:80/abc",
-            "http://user@",
-            "http://user@/abc",
-            "http://abc%20xyz/abc",
-            "http://%20/abc?query=%0A",
-            // Valid absolute-form but with unsupported schemes
-            "otherscheme://host/",
-            "ws://host/",
-            "wss://host/",
-            // Relative form
-            "../../",
-            "..\\.",
-        };
+            get
+            {
+                var data = new TheoryData<string, string>();
 
-        // TODO fix OPTIONS
-        // Must only have one asterisk
-        //"OPTIONS ** HTTP/1.1\r\n",
+                // Invalid absolute-form
+                data.Add("GET", "http://");
+                data.Add("GET", "http:/");
+                data.Add("GET", "https:/");
+                data.Add("GET", "http:///");
+                data.Add("GET", "https://");
+                data.Add("GET", "http:////");
+                data.Add("GET", "http://:80");
+                data.Add("GET", "http://:80/abc");
+                data.Add("GET", "http://user@");
+                data.Add("GET", "http://user@/abc");
+                data.Add("GET", "http://abc%20xyz/abc");
+                data.Add("GET", "http://%20/abc?query=%0A");
+                // Valid absolute-form but with unsupported schemes
+                data.Add("GET", "otherscheme://host/");
+                data.Add("GET", "ws://host/");
+                data.Add("GET", "wss://host/");
+                // Must only have one asterisk
+                data.Add("OPTIONS", "**");
+                // Relative form
+                data.Add("GET", "../../");
+                data.Add("GET", "..\\.");
 
-        //public static TheoryData<string> RequestTargetInvalidData => new TheoryData<string>
-        //{
-        //    // Invalid absolute-form requests
-        //    "GET http:// HTTP/1.1\r\n",
-        //    "GET http:/ HTTP/1.1\r\n",
-        //    "GET https:/ HTTP/1.1\r\n",
-        //    "GET http:/// HTTP/1.1\r\n",
-        //    "GET https:// HTTP/1.1\r\n",
-        //    "GET http://// HTTP/1.1\r\n",
-        //    "GET http://:80 HTTP/1.1\r\n",
-        //    "GET http://:80/abc HTTP/1.1\r\n",
-        //    "GET http://user@ HTTP/1.1\r\n",
-        //    "GET http://user@/abc HTTP/1.1\r\n",
-        //    "GET http://abc%20xyz/abc HTTP/1.1\r\n",
-        //    "GET http://%20/abc?query=%0A HTTP/1.1\r\n",
-        //    // Valid absolute-form but with unsupported schemes
-        //    "GET otherscheme://host/ HTTP/1.1\r\n",
-        //    "GET ws://host/ HTTP/1.1\r\n",
-        //    "GET wss://host/ HTTP/1.1\r\n",
-        //    // Must only have one asterisk
-        //    "OPTIONS ** HTTP/1.1\r\n",
-        //    // Relative form
-        //    "GET ../../ HTTP/1.1\r\n",
-        //    "GET ..\\. HTTP/1.1\r\n",
-        //};
+                return data;
+            }
+        }
 
         public static TheoryData<string, HttpMethod> MethodNotAllowedRequestLine
         {
