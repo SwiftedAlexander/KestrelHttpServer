@@ -363,9 +363,11 @@ namespace Microsoft.AspNetCore.Server.KestrelTests
         }
 
         [Theory]
-        [MemberData(nameof(RequestLineWithInvalidRequestTargetData))]
-        public async Task TakeStartLineThrowsWhenRequestTargetIsInvalid(string requestLine)
+        [MemberData(nameof(RequestTargetInvalidData))]
+        public async Task TakeStartLineThrowsWhenRequestTargetIsInvalid(string target)
         {
+            var requestLine = $"GET {target} HTTP/1.1\r\n";
+
             await _input.Writer.WriteAsync(Encoding.ASCII.GetBytes(requestLine));
             var readableBuffer = (await _input.Reader.ReadAsync()).Buffer;
 
@@ -373,7 +375,7 @@ namespace Microsoft.AspNetCore.Server.KestrelTests
                 _frame.TakeStartLine(readableBuffer, out _consumed, out _examined));
             _input.Reader.Advance(_consumed, _examined);
 
-            Assert.Equal($"Invalid request line: '{Escape(requestLine)}'", exception.Message);
+            Assert.Equal($"Invalid request target: '{Escape(target)}'", exception.Message);
         }
 
         [Theory]
@@ -623,8 +625,8 @@ namespace Microsoft.AspNetCore.Server.KestrelTests
                 + ellipsis;
         }
 
-        public static TheoryData<string> RequestLineWithInvalidRequestTargetData 
-            => HttpParsingData.RequestLineWithInvalidRequestTarget;
+        public static TheoryData<string> RequestTargetInvalidData 
+            => HttpParsingData.RequestTargetInvalidData;
 
         public static TheoryData<string, HttpMethod> MethodNotAllowedTargetData
             => HttpParsingData.MethodNotAllowedRequestLine;

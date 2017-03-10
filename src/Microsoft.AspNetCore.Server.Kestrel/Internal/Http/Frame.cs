@@ -1322,12 +1322,10 @@ namespace Microsoft.AspNetCore.Server.Kestrel.Internal.Http
                 var ch = target[i];
                 if (!UriUtilities.IsValidAuthorityCharacter(ch))
                 {
-                    if (Log.IsEnabled(LogLevel.Information))
-                    {
-                        RejectRequestLine(line);
-                    }
-
-                    throw BadHttpRequestException.GetException(RequestRejectionReason.InvalidRequestLine);
+                    RequestRejectionUtilities.RejectRequest(
+                        RequestRejectionReason.InvalidRequestTarget,
+                        detail: target,
+                        logDetail: Log.IsEnabled(LogLevel.Information));
                 }
             }
 
@@ -1335,7 +1333,7 @@ namespace Microsoft.AspNetCore.Server.Kestrel.Internal.Http
             // requests (https://tools.ietf.org/html/rfc7231#section-4.3.6).
             if (method != HttpMethod.Connect)
             {
-                RejectRequest(RequestRejectionReason.ConnectMethodRequired);
+                RequestRejectionUtilities.RejectRequest(RequestRejectionReason.ConnectMethodRequired);
             }
 
             // When making a CONNECT request to establish a tunnel through one or
@@ -1360,7 +1358,7 @@ namespace Microsoft.AspNetCore.Server.Kestrel.Internal.Http
             // OPTIONS request (https://tools.ietf.org/html/rfc7231#section-4.3.7).
             if (method != HttpMethod.Options)
             {
-                RejectRequest(RequestRejectionReason.OptionsMethodRequired);
+                RequestRejectionUtilities.RejectRequest(RequestRejectionReason.OptionsMethodRequired);
             }
 
             RawTarget = Asterisk;
@@ -1390,7 +1388,10 @@ namespace Microsoft.AspNetCore.Server.Kestrel.Internal.Http
             {
                 if (Log.IsEnabled(LogLevel.Information))
                 {
-                    RejectRequestLine(line);
+                    RequestRejectionUtilities.RejectRequest(
+                        RequestRejectionReason.InvalidRequestTarget,
+                        detail: target,
+                        logDetail: Log.IsEnabled(LogLevel.Information));
                 }
 
                 throw BadHttpRequestException.GetException(RequestRejectionReason.InvalidRequestLine);

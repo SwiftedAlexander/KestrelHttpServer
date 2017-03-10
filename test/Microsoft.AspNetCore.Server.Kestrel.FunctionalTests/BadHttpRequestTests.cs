@@ -159,17 +159,17 @@ namespace Microsoft.AspNetCore.Server.Kestrel.FunctionalTests
 
                 foreach (var requestLine in HttpParsingData.RequestLineInvalidData)
                 {
-                    data.Add(requestLine, $"Invalid request line: '{requestLine.Replace("\r", "\\x0D").Replace("\n", "\\x0A").Replace("\0", "\\x00")}'");
+                    data.Add(requestLine, $"Invalid request line: '{Escape(requestLine)}'");
                 }
 
                 foreach (var target in HttpParsingData.TargetWithEncodedNullCharData)
                 {
-                    data.Add($"GET {target} HTTP/1.1\r\n", $"Invalid request target: '{target.Replace("\r", "\\x0D").Replace("\n", "\\x0A")}'");
+                    data.Add($"GET {target} HTTP/1.1\r\n", $"Invalid request target: '{Escape(target)}'");
                 }
 
                 foreach (var target in HttpParsingData.TargetWithNullCharData)
                 {
-                    data.Add($"GET {target} HTTP/1.1\r\n", $"Invalid request target: '{target.Replace("\r", "\\x0D").Replace("\n", "\\x0A").Replace("\0", "\\x00")}'");
+                    data.Add($"GET {target} HTTP/1.1\r\n", $"Invalid request target: '{Escape(target)}'");
                 }
 
                 return data;
