@@ -107,7 +107,7 @@ namespace Microsoft.AspNetCore.Server.KestrelTests
             var exception = Assert.Throws<BadHttpRequestException>(() =>
                 parser.ParseRequestLine(Mock.Of<IHttpRequestLineHandler>(), buffer, out var consumed, out var examined));
 
-            Assert.Equal($"Invalid request line: '{requestLine.Replace("\r", "\\x0D").Replace("\n", "\\x0A").Replace("\0", "\\x00")}'", exception.Message);
+            Assert.Equal($"Invalid request line: '{requestLine.EscapeNonPrintable()}'", exception.Message);
             Assert.Equal(StatusCodes.Status400BadRequest, (exception as BadHttpRequestException).StatusCode);
         }
 
@@ -128,7 +128,7 @@ namespace Microsoft.AspNetCore.Server.KestrelTests
             var exception = Assert.Throws<BadHttpRequestException>(() =>
                 parser.ParseRequestLine(Mock.Of<IHttpRequestLineHandler>(), buffer, out var consumed, out var examined));
 
-            Assert.Equal($"Invalid request line: '{method.Replace("\0", "\\x00")} / HTTP/1.1\\x0D\\x0A'", exception.Message);
+            Assert.Equal($"Invalid request line: '{method.EscapeNonPrintable()} / HTTP/1.1\\x0D\\x0A'", exception.Message);
             Assert.Equal(StatusCodes.Status400BadRequest, (exception as BadHttpRequestException).StatusCode);
         }
 

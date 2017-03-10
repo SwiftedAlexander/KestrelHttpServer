@@ -393,7 +393,7 @@ namespace Microsoft.AspNetCore.Server.KestrelTests
             Assert.Equal("Method not allowed.", exception.Message);
             Assert.Equal(HttpUtilities.MethodToString(allowedMethod), exception.AllowedHeader);
         }
-        
+
         [Fact]
         public void RequestProcessingAsyncEnablesKeepAliveTimeout()
         {

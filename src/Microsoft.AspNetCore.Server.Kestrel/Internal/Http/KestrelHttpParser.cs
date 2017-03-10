@@ -121,12 +121,6 @@ namespace Microsoft.AspNetCore.Server.Kestrel.Internal.Http
                 RejectRequestLine(data, length);
             }
 
-            // End of path or start of query string not found
-            if (offset == length)
-            {
-                RejectRequestLine(data, length);
-            }
-
             var pathBuffer = new Span<byte>(data + pathStart, offset - pathStart);
 
             // Query string
