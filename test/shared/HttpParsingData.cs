@@ -265,26 +265,23 @@ namespace Microsoft.AspNetCore.Testing
                     "TRACE",
                     "PATCH",
                     "CONNECT",
-                    //"OPTIONS",
+                    "OPTIONS",
                     "CUSTOM",
                 };
 
-                var theoryData = new TheoryData<string, HttpMethod>();
-                foreach (var line in methods
-                    .Select(m => Tuple.Create($"{m} * HTTP/1.1\r\n", HttpMethod.Options))
-                    .Concat(new[]
-                    {
-                        // CONNECT required for authority-form targets
-                        Tuple.Create("GET http:80 HTTP/1.1\r\n", HttpMethod.Connect),
-                        Tuple.Create("GET http: HTTP/1.1\r\n", HttpMethod.Connect),
-                        Tuple.Create("GET https: HTTP/1.1\r\n", HttpMethod.Connect),
-                        Tuple.Create("GET . HTTP/1.1\r\n", HttpMethod.Connect),
-                    }))
+                var data = new TheoryData<string, HttpMethod>();
+
+                foreach (var method in methods.Except(new[] { "OPTIONS" }))
                 {
-                    theoryData.Add(line.Item1, line.Item2);
+                    data.Add($"{method} * HTTP/1.1\r\n", HttpMethod.Options);
                 }
 
-                return theoryData;
+                foreach (var method in methods.Except(new[] { "CONNECT" }))
+                {
+                    data.Add($"{method} www.example.com:80 HTTP/1.1\r\n", HttpMethod.Connect);
+                }
+
+                return data;
             }
         }
 
@@ -294,10 +291,10 @@ namespace Microsoft.AspNetCore.Testing
             {
                 return new[]
                 {
-                "\0",
-                "/\0",
-                "/\0\0",
-                "/%C8\0",
+                    "\0",
+                    "/\0",
+                    "/\0\0",
+                    "/%C8\0",
                 }.Concat(QueryStringWithNullCharData);
             }
         }
